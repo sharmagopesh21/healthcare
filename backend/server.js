@@ -6,6 +6,12 @@ import bcrypt from "bcryptjs"
 import connectToMongoDB from "./db/connectToMongoDB.js"
 import authRoutes from "./routes/auth.routes.js";
 import appoinRoutes from "./routes/appointment.routes.js";
+import insurancereqRoutes from "./routes/insuranceReq.routes.js"
+import insuranceRoutes from "./routes/insurance.routes.js";
+import insuranceClaimRoutes from "./routes/insuranceClaim.routes.js"
+import currentInsuranceRoutes from "./routes/currentInsurance.routes.js"
+import companyCustomerRoutes from "./routes/companyCustomer.routes.js"
+import applyInsuranceClaimRoutes from "./routes/applyInsuranceClaim.routes.js"
 
 const app = express()
 
@@ -20,6 +26,12 @@ app.get("/",(req,res)=>{
 
 app.use("/api/auth", authRoutes);
 app.use("/api/appointment", appoinRoutes);
+app.use("/api/insuranceReq", insurancereqRoutes)
+app.use("/api/insuranceApprove", insuranceRoutes)
+app.use("/api/insuranceClaim", insuranceClaimRoutes)
+app.use("/api/currentInsurance", currentInsuranceRoutes)
+app.use("/api/allCustomers", companyCustomerRoutes)
+app.use("/api/claimInsurance", applyInsuranceClaimRoutes)
 
 app.listen(PORT,()=>{
     connectToMongoDB();

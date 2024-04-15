@@ -10,7 +10,6 @@ const AppoinSchema = new mongoose.Schema(
         type: String,
         required: true,
         lowercase: true,
-        unique:false,
         trim: true
     },
     gender: {

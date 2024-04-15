@@ -1,1 +1,1 @@
-/api/claimInsurance
+/api/appointment

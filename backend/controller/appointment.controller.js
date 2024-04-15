@@ -3,9 +3,14 @@ import Appointment from "../models/appoinment.model.js";
 
 export const appointRequest = async (req, res) => {
     try {
-      const user=req.user
+      const fullName=req.user.fullName
+      const email=req.user.email
+      const gender=req.user.gender
+      const address=req.user.address
+      const age=req.user.age
+      const phone=req.user.phone
       const {date,time,docemail } = req.body;
-
+      
       if(!isValidTime(time)){
         return res.status(400).send({
             message:"Time is not valid"
@@ -22,19 +27,19 @@ export const appointRequest = async (req, res) => {
         return res.status(400).json({error: "Doctor Email is Not Valid"});
       }
   
-      const appoin = await Appointment.findOne({ email: user.email, docemail });
+      const appoin = await Appointment.find({ email:email, docemail:docemail });
   
-      if (appoin) {
+      if (appoin.length!=0) {
         return res.status(400).json({ error: "a Appointment request with this Doctor already exist" });
       }
       
       const newappoin = new Appointment({
-        fullName: user.fullName, // Accessing user properties correctly
-        email: user.email,
-        gender: user.gender,
-        address: user.address,
-        age: user.age,
-        phone: user.phone,
+        fullName, // Accessing user properties correctly
+        email,
+        gender,
+        address,
+        age,
+        phone,
         date,
         time,
         docemail

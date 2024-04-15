@@ -23,7 +23,7 @@ export const appointRequest = async (req, res) => {
 
       if(!isValidEmail(docemail)){
         return res.status(400).json({error: "Doctor Email is Not Valid"});
-    }
+      }
   
       const appoin = await Appointment.findOne({email:email,docemail:docemail});
   
@@ -70,7 +70,11 @@ export const approval=async(req,res)=>{
             return res.status(400).json({error: "Your Email is Not Valid"});
         }
 
-        const approv = await Appointment.findOne({email:email});
+        if(!isValidEmail(docemail)){
+            return res.status(400).json({error: "Doctor Email is Not Valid"});
+        }
+
+        const approv = await Appointment.findOne({email:email,docemail:docemail});
 
         if (!approv) {
             return res.status(400).json({ error: "this appointment request does not exist" });
@@ -81,10 +85,106 @@ export const approval=async(req,res)=>{
         res.status(201).json({
             _id: approv._id,
             email: approv.email,
+            fullName:approv.fullName,
+            decision:decision
         });
 
     } catch (error) {
       console.log("Error in approval controller", error.message);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+export const approvedRequest=async(req,res)=>{
+    try {
+        const {docemail}=req.body;
+
+        if(!isValidEmail(docemail)){
+            return res.status(400).json({error: "Doctor Email is Not Valid"});
+        }
+
+        const apprequest = await Appointment.find({docemail:docemail,progress:"Approved"});
+
+        if (apprequest.length==0) {
+            return res.status(201).json({
+                message:"no Request had been yet approved"
+            });
+        }
+
+        res.status(200).json(apprequest);
+
+    } catch (error) {
+        console.log("Error in approvedRequest controller", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+export const Request=async(req,res)=>{
+    try {
+        const {docemail}=req.body;
+
+        if(!isValidEmail(docemail)){
+            return res.status(400).json({error: "Doctor Email is Not Valid"});
+        }
+
+        const apprequest = await Appointment.find({docemail:docemail,progress:"Pending"});
+
+        if (apprequest.length==0) {
+            return res.status(201).json({
+                message:"no Request had been yet approved"
+            });
+        }
+
+        res.status(200).json(apprequest);
+
+    } catch (error) {
+        console.log("Error in Request controller", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+export const notapprove=async(req,res)=>{
+    try {
+        const {docemail}=req.body;
+
+        if(!isValidEmail(docemail)){
+            return res.status(400).json({error: "Doctor Email is Not Valid"});
+        }
+
+        const apprequest = await Appointment.find({docemail:docemail,progress:"Not Approved"});
+
+        if (apprequest.length==0) {
+            return res.status(201).json({
+                message:"no Request is approved"
+            });
+        }
+
+        res.status(200).json(apprequest);
+
+    } catch (error) {
+        console.log("Error in not approved controller", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+export const prevappoint= async (req, res) => {
+    try {
+      const {email} = req.body;
+  
+      if(!isValidEmail(email)){
+          return res.status(400).json({error: "Your Email is Not Valid"});
+      }
+
+      const appoin = await Appointment.find({email});
+  
+      if (appoin.length==0) {
+        return res.status(400).json({ message: "no previous appointments are there" });
+      }
+
+      res.status(200).json(appoin)
+
+    } catch (error) {
+      console.log("Error in appoint request controller", error.message);
       res.status(500).json({ error: "Internal Server Error" });
     }
 };

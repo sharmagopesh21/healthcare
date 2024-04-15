@@ -3,7 +3,7 @@ import Insurance from "../models/Insurance.model.js";
 export const CurrentInsurance = async (req, res) => {
     try {
         // Fetch all insurances purchased by the user
-        const { email } = req.body;
+        const email = req.user.email;
         const insurances = await Insurance.find({ userEmail: email });
 
         // Get the current date

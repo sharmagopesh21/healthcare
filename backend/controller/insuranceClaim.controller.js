@@ -4,7 +4,7 @@ import InsuranceClaimReq from "../models/insuranceClaimReq.model.js";
 // Function to get all the requests
 export const getAllRequests = async (req, res) => {
     try {
-        const { compEmail } = req.body;
+        const compEmail= req.company.email;
         const requests = await InsuranceClaimReq.find({ companyEmail: compEmail });
         res.json(requests);
     } catch (error) {

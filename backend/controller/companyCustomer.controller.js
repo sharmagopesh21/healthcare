@@ -3,7 +3,7 @@ import Insurance from "../models/Insurance.model.js";
 export const AllUsers = async (req, res) => {
     try{
         const currentDate = new Date();
-        const {compEmail} = req.body;
+        const compEmail=req.company.email;
         const allUsers = await Insurance.find({ companyEmail: compEmail });
 
         const usersWithInsuranceStatus = allUsers.map(user => {

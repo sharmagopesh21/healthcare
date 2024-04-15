@@ -3,7 +3,8 @@ import PendingInsurance from "../models/pendingInsuranceReq.model.js";
 
 export const Approve = async (req, res) => {
     try {
-        const { compEmail, requestId, decision } = req.body;
+        const compEmail=req.company.email;
+        const {requestId, decision } = req.body;
         const request = await PendingInsurance.findOne({ _id: requestId, companyEmail: compEmail });
 
         if (!request) {

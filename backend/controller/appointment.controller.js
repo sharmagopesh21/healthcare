@@ -3,11 +3,8 @@ import Appointment from "../models/appoinment.model.js";
 
 export const appointRequest = async (req, res) => {
     try {
-      const { fullName, email,gender,address,age,phone,date,time,docemail } = req.body;
-  
-      if(!isValidEmail(email)){
-          return res.status(400).json({error: "Your Email is Not Valid"});
-      }
+      const user=req.user
+      const {date,time,docemail } = req.body;
 
       if(!isValidTime(time)){
         return res.status(400).send({
@@ -25,23 +22,23 @@ export const appointRequest = async (req, res) => {
         return res.status(400).json({error: "Doctor Email is Not Valid"});
       }
   
-      const appoin = await Appointment.findOne({email:email,docemail:docemail});
+      const appoin = await Appointment.findOne({ email: user.email, docemail });
   
       if (appoin) {
         return res.status(400).json({ error: "a Appointment request with this Doctor already exist" });
       }
       
       const newappoin = new Appointment({
-        fullName,
-        email,
-        gender,
-        address,
-        age,
-        phone,
+        fullName: user.fullName, // Accessing user properties correctly
+        email: user.email,
+        gender: user.gender,
+        address: user.address,
+        age: user.age,
+        phone: user.phone,
         date,
         time,
         docemail
-      });
+    });
   
       if (newappoin) {
         // Generate JWT Token
@@ -64,23 +61,25 @@ export const appointRequest = async (req, res) => {
 
 export const approval=async(req,res)=>{
     try {
-        const {email,decision,docemail} = req.body;
+
+        const doctor=req.doctor
+        const {email,decision} = req.body;
 
         if(!isValidEmail(email)){
             return res.status(400).json({error: "Your Email is Not Valid"});
         }
 
-        if(!isValidEmail(docemail)){
+        if(!isValidEmail(doctor.email)){
             return res.status(400).json({error: "Doctor Email is Not Valid"});
         }
 
-        const approv = await Appointment.findOne({email:email,docemail:docemail});
+        const approv = await Appointment.findOne({email:email,docemail:doctor.email});
 
         if (!approv) {
             return res.status(400).json({ error: "this appointment request does not exist" });
         } 
 
-        await Appointment.updateOne({ email: email,docemail:docemail}, { progress: decision })
+        await Appointment.updateOne({ email: email,docemail:doctor.email}, { progress: decision })
 
         res.status(201).json({
             _id: approv._id,
@@ -97,13 +96,13 @@ export const approval=async(req,res)=>{
 
 export const approvedRequest=async(req,res)=>{
     try {
-        const {docemail}=req.body;
+        const doctor=req.doctor;
 
-        if(!isValidEmail(docemail)){
+        if(!isValidEmail(doctor.email)){
             return res.status(400).json({error: "Doctor Email is Not Valid"});
         }
 
-        const apprequest = await Appointment.find({docemail:docemail,progress:"Approved"});
+        const apprequest = await Appointment.find({docemail:doctor.email,progress:"Approved"});
 
         if (apprequest.length==0) {
             return res.status(201).json({
@@ -121,13 +120,13 @@ export const approvedRequest=async(req,res)=>{
 
 export const Request=async(req,res)=>{
     try {
-        const {docemail}=req.body;
+        const docter=req.doctor;
 
-        if(!isValidEmail(docemail)){
+        if(!isValidEmail(doctor.email)){
             return res.status(400).json({error: "Doctor Email is Not Valid"});
         }
 
-        const apprequest = await Appointment.find({docemail:docemail,progress:"Pending"});
+        const apprequest = await Appointment.find({docemail:doctor.email,progress:"Pending"});
 
         if (apprequest.length==0) {
             return res.status(201).json({
@@ -145,13 +144,13 @@ export const Request=async(req,res)=>{
 
 export const notapprove=async(req,res)=>{
     try {
-        const {docemail}=req.body;
+        const doctor=req.doctor;
 
-        if(!isValidEmail(docemail)){
+        if(!isValidEmail(doctor.email)){
             return res.status(400).json({error: "Doctor Email is Not Valid"});
         }
 
-        const apprequest = await Appointment.find({docemail:docemail,progress:"Not Approved"});
+        const apprequest = await Appointment.find({docemail:doctor.email,progress:"Not Approved"});
 
         if (apprequest.length==0) {
             return res.status(201).json({
@@ -169,13 +168,13 @@ export const notapprove=async(req,res)=>{
 
 export const prevappoint= async (req, res) => {
     try {
-      const {email} = req.body;
+      const user = req.user;
   
-      if(!isValidEmail(email)){
+      if(!isValidEmail(user.email)){
           return res.status(400).json({error: "Your Email is Not Valid"});
       }
 
-      const appoin = await Appointment.find({email});
+      const appoin = await Appointment.find({email:user.email});
   
       if (appoin.length==0) {
         return res.status(400).json({ message: "no previous appointments are there" });

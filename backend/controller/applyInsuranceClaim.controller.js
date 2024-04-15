@@ -1,12 +1,15 @@
 import Insurance from "../models/Insurance.model.js";
 import InsuranceClaimReq from "../models/insuranceClaimReq.model.js";
+import jwt from "jsonwebtoken";
 
 export const applyReq  = async (req, res) => {
     try{
-        const { email, requiredAmount, issue } = req.body;
+
+        const user=req.user;
+        const {requiredAmount, issue } = req.body;
 
         // Fetch the insurance details from the database
-        const insurance = await Insurance.findOne({ email: email });
+        const insurance = await Insurance.findOne({ userEmail: user.email });
 
         if (!insurance) {
             return res.status(400).json({error: "No insurance found for this user"});

@@ -1,10 +1,11 @@
 
 import Company from "../models/company.model.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken"
 
 export const signupComp = async (req, res) => {
     try {
-      const { Name, email, password, confirmPassword,address,phone } = req.body;
+      const { name, email, password, confirmPassword,address,phone } = req.body;
   
       if(!isValidEmail(email)){
           return res.status(400).json({error: "Email Not Valid"});
@@ -25,7 +26,7 @@ export const signupComp = async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, salt);
   
       const newcomp = new Company({
-        Name,
+        name,
         email,
         password: hashedPassword,
         address,
@@ -39,7 +40,7 @@ export const signupComp = async (req, res) => {
   
         res.status(201).json({
           _id: newcomp._id,
-          Name: newcomp.Name,
+          Name: newcomp.name,
           email: newcomp.email,
         });
       } else {
@@ -68,12 +69,15 @@ export const signinComp = async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password" });
       }
 
+      const token=jwt.sign({email:email},"USER")
+
         // generateTokenAndSetCookie(user._id, res);
 
       res.status(200).json({
         _id: Comp._id,
         Name: Comp.Name,
         email: Comp.email,
+        accessToken:token
       });
 
     } catch (error) {

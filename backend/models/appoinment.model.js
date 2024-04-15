@@ -9,8 +9,8 @@ const AppoinSchema = new mongoose.Schema(
     email: {
         type: String,
         required: true,
-        unique: true,
         lowercase: true,
+        unique:false,
         trim: true
     },
     gender: {
@@ -26,7 +26,7 @@ const AppoinSchema = new mongoose.Schema(
     age: {
         type: Number,
         required: true,
-        min: 0
+        min: 1
     },
     phone: {
         type: String,
@@ -44,7 +44,6 @@ const AppoinSchema = new mongoose.Schema(
     docemail:{
         type: String,
         required: true,
-        unique: true,
         lowercase: true,
         trim: true
     },
@@ -56,6 +55,8 @@ const AppoinSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+AppoinSchema.index({ email: 1, docemail: 1 }, { unique: true });
 
 const Appointment = mongoose.model("Appointments", AppoinSchema);
 

@@ -2,7 +2,13 @@ import PendingInsurance from "../models/pendingInsuranceReq.model.js";
 
 export const Apply = async (req, res) => {
     try{
-        const {fullName, userEmail, companyEmail, gender, address, age, phone, startDate, endDate, amount} = req.body;
+        const fullName=req.user.fullName;
+        const userEmail=req.user.email;
+        const gender=req.user.gender;
+        const address=req.user.address;
+        const age=req.user.age;
+        const phone=req.user.phone;
+        const {companyEmail, startDate, endDate, amount} = req.body;
 
         if(!isValidEmail(userEmail)){
             return res.status(400).json({error: "Email Not Valid"});

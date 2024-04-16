@@ -6,6 +6,9 @@ import verifyTokenuser from "../middleware/user.mw.js";
 
 const router = express.Router();
 
-router.post("/",[verifyTokenuser],CurrentInsurance);
+const {res} = [verifyTokenuser]
+
+// console.log(res)
+router.get("/",[verifyTokenuser],CurrentInsurance);
 
 export default router;

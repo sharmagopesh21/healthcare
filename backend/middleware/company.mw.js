@@ -3,7 +3,8 @@
 import Insurance from "../models/Insurance.model.js";
 import InsuranceClaimReq from "../models/insuranceClaimReq.model.js";
 import jwt from "jsonwebtoken";
-import company_model from "../models/company.model.js"
+import Company from "../models/company.model.js"
+import { JWT_SECRET } from "../config.js";
 
 export const verifyTokencompany=(req,res,next)=>{
 
@@ -15,23 +16,24 @@ export const verifyTokencompany=(req,res,next)=>{
         })
     }
 
-    jwt.verify(token,"USER",async (err,decoded)=>{
-        if(err){
-            return res.status(401).send({
-                message:"unauthorized !"
-            })
+    jwt.verify(token, JWT_SECRET, async (err, decoded) => { // Use JWT_SECRET
+        console.log("check2");
+        console.log("hell");
+        if (err) {
+          return res.status(401).send({ message: "unauthorized !" });
         }
-        const company=await company_model.findOne({email:decoded.email})
-
-        if(!company){
-            return res.status(400).send({
-                message:"unauthorized, this user for this token doesn't exist"
-            })
+        console.log("3");
+        console.log(decoded.email);
+        const company = await Company.findOne({ email: decoded.email });
+        console.log(company);
+        if (!company) {
+          return res.status(400).send({
+            message: "unauthorized, this user for this token doesn't exist"
+          });
         }
-        req.company=company
-
-        next()
-    })
+        req.company = company;
+        next();
+      });
 
 };
 

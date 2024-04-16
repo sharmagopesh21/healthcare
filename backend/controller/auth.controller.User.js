@@ -63,6 +63,7 @@ export const signinUser = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
+    // console.log(user);
     const isPasswordCorrect = await bcrypt.compare(
       password,
       user?.password || ""
@@ -74,13 +75,22 @@ export const signinUser = async (req, res) => {
 
     const token=jwt.sign({email:email},"USER")
 
+    res.cookie("jwt", token, {
+      maxAge: 15 * 24 * 60 * 60 * 1000, //in ms
+      httpOnly: true, //prevent xss attacks cross-site scripting attacks or cookie is not accessable via js
+      sameSite: "strict",
+      path: '/', // cookie will be available for all routes
+    });
     // generateTokenAndSetCookie(user._id, res);
+
+    console.log("yooooooo")
+    console.log(res.cookie);
 
     res.status(200).json({
       _id: user._id,
       fullName: user.fullName,
       email: user.email,
-      accessToken:token
+      accessToken:token,
     });
   } catch (error) {
     console.log("Error in Login controller", error.message);
@@ -91,12 +101,22 @@ export const signinUser = async (req, res) => {
 export const logoutUser = (req, res) => {
   try {
     // res.cookie("jwt", "", { maxAge: 0 });
+
+    res.clearCookie('jwt', {
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: true,
+      path: '/',
+    });
     res.status(200).json({ message: "Logged Out Successfully" });
   } catch (error) {
     console.log("Error in logout controller", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
+
 };
+
+
 
 function isValidEmail(email) {
     const re = /@.*\.com/;

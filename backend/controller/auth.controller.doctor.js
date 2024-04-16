@@ -2,6 +2,7 @@
 import Doctor from "../models/doctor.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken"
+import { JWT_SECRET } from '../../backend/config.js';
 
 export const signupDr = async (req, res) => {
     try {
